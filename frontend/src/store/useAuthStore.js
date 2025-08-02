@@ -3,6 +3,10 @@ import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 
+const SOCKET_URL = import.meta.env.MODE === "development"
+  ? import.meta.env.VITE_REACT_APP_BACKEND_BASE_URL
+  : "/";
+
 const BASE_URL = import.meta.env.MODE === "development" ? `${import.meta.env.VITE_REACT_APP_BACKEND_BASE_URL}/api` : "/";
 
 export const useAuthStore = create((set, get) => ({
@@ -84,9 +88,21 @@ export const useAuthStore = create((set, get) => ({
   connectSocket: () => {
     const { authUser } = get();
     if (!authUser) return;
-    const socket = io(BASE_URL);
-    socket.connect();
-    set({ socket: socket });
+
+    const socket = io(SOCKET_URL, {
+      withCredentials: true,
+      transports: ['websocket'], // force WebSocket
+    });
+
+    socket.on("connect", () => {
+      console.log("✅ Socket connected:", socket.id);
+    });
+
+    socket.on("connect_error", (err) => {
+      console.error("❌ Socket connection error:", err.message);
+    });
+
+    set({ socket });
   },
   disconnectSocket: () => {
     const { socket } = get();
