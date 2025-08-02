@@ -3,9 +3,7 @@ import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 
-const SOCKET_URL = import.meta.env.MODE === "development"
-  ? import.meta.env.VITE_REACT_APP_BACKEND_BASE_URL
-  : "/";
+const SOCKET_URL = import.meta.env.VITE_REACT_APP_BACKEND_BASE_URL;
 
 const BASE_URL = import.meta.env.MODE === "development" ? `${import.meta.env.VITE_REACT_APP_BACKEND_BASE_URL}/api` : "/";
 
